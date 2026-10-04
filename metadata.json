@@ -1,0 +1,13 @@
+{
+  "title": "SNAKE 3310 GENZ",
+  "genre": "Arcade",
+  "description": "A fast modern evolution arcade game: grow, chain combos, unlock original creatures and reach the GENZ LEGEND.",
+  "developer": "IAuron",
+  "version": "3.0-playables-candidate",
+  "orientation": "responsive",
+  "controls": [
+    "touch",
+    "mouse",
+    "keyboard"
+  ]
+}
