@@ -63,6 +63,10 @@ jobs:
 
           s = s.replace("let anim=G.boost?'BOOST':(G.bite?'BITE':(G.tick%70<9?'BLINK':'IDLE'));",
                         "let anim='IDLE';", 1)
+
+          # Remove the animation debug badge from the final UI.
+          s = s.replace(/<div[^>]*id=["']animBadge["'][^>]*>.*?<\\/div>/s, "");
+          s = s.replace(/document\\.getElementById\\(['"]animBadge['"]\\)\\.textContent=anim;/g, "");
           s = s.replace("Math.sin(G.tick*.22+i*.65)",
                         "Math.sin(G.tick*.04+i*.65)", 1)
           s = s.replace("G.tick%70>=4&&G.tick%70<=8",
