@@ -62,7 +62,7 @@ jobs:
                         "function endGame(reason){G.running=false;try{PlayablesAdapter.score()}catch(e){};document.getElementById('finalScore').textContent=G.score;document.getElementById('finalInfo').textContent=(reason?reason+' · ':'')+\`${currentForm().name} · ${G.foodCount} fruits · combo max ${Math.floor(data.stats.maxCombo)} · +${G.foodCount*3} coins environ\`;document.getElementById('gameover').classList.add('show');save()}", 1)
 
           s = s.replace("let anim=G.boost?'BOOST':(G.bite?'BITE':(G.tick%70<9?'BLINK':'IDLE'));",
-                        "let animT=performance.now();let anim=G.boost?'BOOST':(G.bite?'BITE':(Math.floor(animT/160)%24===0?'BLINK':'IDLE'));", 1)
+                        "let anim='IDLE';", 1)
           s = s.replace("Math.sin(G.tick*.22+i*.65)",
                         "Math.sin(G.tick*.04+i*.65)", 1)
           s = s.replace("G.tick%70>=4&&G.tick%70<=8",
