@@ -49,6 +49,15 @@ jobs:
 
           s = s.replace(old_resize, new_resize, 1)
           s = s.replace(old_start, new_start, 1)
+
+          old_step = " G.dir=G.next;let h={x:G.snake[0].x+G.dir.x,y:G.snake[0].y+G.dir.y},n=G.grid;\\n if(h.x<0||h.y<0||h.x>=n||h.y>=n||G.snake.some(s=>s.x==h.x&&s.y==h.y)){return endGame()}"
+          new_step = " G.dir=G.next;let h={x:G.snake[0].x+G.dir.x,y:G.snake[0].y+G.dir.y},n=G.grid;\\n h.x=(h.x+n)%n;h.y=(h.y+n)%n;\\n if(G.snake.some(s=>s.x==h.x&&s.y==h.y)){return endGame()}"
+          if old_step not in s:
+              raise SystemExit("Expected step collision block not found")
+          s = s.replace(old_step, new_step, 1)
+          s = s.replace("let interval=Math.max(48,115-data.up.speed*7-(G.boost?28:0));",
+                        "let interval=Math.max(70,155-data.up.speed*7-(G.boost?28:0));", 1)
+
           p.write_text(s, encoding="utf-8")
 
           m = re.search(r"<script>(.*?)</script>", s, re.S)
