@@ -29,16 +29,18 @@ jobs:
           rm -rf public
           mkdir public
           unzip -q SNAKE_3310_GENZ_PLAYABLES_FINAL_CANDIDATE.zip -d public
+          test -f public/index.html
           python - <<'PY'
           from pathlib import Path
+          import re
           p = Path("public/index.html")
           s = p.read_text(encoding="utf-8")
-          bad = "  ctx.restore();\n  ctx.restore();\n  ctx.restore();\n}\n\nfunction bossHit()"
-          good = "  ctx.restore();\n}\n\nfunction bossHit()"
-          if bad not in s:
-              raise SystemExit("Expected duplicate ctx.restore() block was not found")
-          p.write_text(s.replace(bad, good, 1), encoding="utf-8")
+          m = re.search(r"<script>(.*?)</script>", s, re.S)
+          if not m:
+              raise SystemExit("No game script found")
+          Path("/tmp/game.js").write_text(m.group(1), encoding="utf-8")
           PY
+          node --check /tmp/game.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
