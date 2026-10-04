@@ -17,3 +17,6 @@ Local mode intentionally does not persist browser saves in this candidate; cloud
 The official YouTube Playables SDK script URL/package is controlled by the Developer Portal. It is intentionally not guessed or replaced with a third-party SDK URL. Insert the official SDK script before the game code, then run the official Test Suite.
 
 This candidate is not claimed to be certified. Certification and publication remain a YouTube review process.
+
+## Latest deployment fix
+The GitHub Pages workflow patches the known duplicate `ctx.restore()` block in the bundled candidate before publishing, so the deployed browser build can execute the game script.
