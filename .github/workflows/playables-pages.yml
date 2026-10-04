@@ -33,11 +33,27 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import re
+
           p = Path("public/index.html")
           s = p.read_text(encoding="utf-8")
+
+          old_resize = "function resize(){let r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);G.cell=Math.max(22,Math.floor(Math.min(r.width,r.height)/18));G.grid=Math.floor(Math.min(r.width,r.height)/G.cell)}"
+          new_resize = "function resize(){const arena=document.querySelector('.arena');let r=(arena&&arena.getBoundingClientRect().width>0)?arena.getBoundingClientRect():c.getBoundingClientRect(),d=devicePixelRatio||1;let w=Math.max(1,r.width),h=Math.max(1,r.height);c.width=w*d;c.height=h*d;ctx.setTransform(d,0,0,d,0,0);G.cell=Math.max(22,Math.floor(Math.min(w,h)/18));G.grid=Math.max(12,Math.floor(Math.min(w,h)/G.cell))}"
+          old_start = "function startGame(){closeModal('gameover');closeModal('boss');show('game');resize();let n=G.grid;G.snake=[{x:Math.floor(n/2),y:Math.floor(n/2)},{x:Math.floor(n/2)-1,y:Math.floor(n/2)}];G.dir={x:1,y:0};G.next={x:1,y:0};G.score=0;G.combo=0;G.foodCount=0;G.boost=0;G.particles=[];G.paused=false;G.tick=0;spawnFood();G.running=true;G.last=performance.now();document.getElementById('worldBadge').textContent='🌿 GREEN VALLEY';requestAnimationFrame(loop)}"
+          new_start = "function startGame(){closeModal('gameover');closeModal('boss');show('game');requestAnimationFrame(()=>{resize();let n=Math.max(12,G.grid);G.grid=n;G.snake=[{x:Math.floor(n/2),y:Math.floor(n/2)},{x:Math.floor(n/2)-1,y:Math.floor(n/2)}];G.dir={x:1,y:0};G.next={x:1,y:0};G.score=0;G.combo=0;G.foodCount=0;G.boost=0;G.particles=[];G.paused=false;G.tick=0;spawnFood();G.running=true;G.last=performance.now();document.getElementById('worldBadge').textContent='🌿 GREEN VALLEY';requestAnimationFrame(loop)})}"
+
+          if old_resize not in s:
+              raise SystemExit("Expected resize block not found")
+          if old_start not in s:
+              raise SystemExit("Expected startGame block not found")
+
+          s = s.replace(old_resize, new_resize, 1)
+          s = s.replace(old_start, new_start, 1)
+          p.write_text(s, encoding="utf-8")
+
           m = re.search(r"<script>(.*?)</script>", s, re.S)
           if not m:
-              raise SystemExit("No game script found")
+              raise SystemExit("No game script found after patch")
           Path("/tmp/game.js").write_text(m.group(1), encoding="utf-8")
           PY
           node --check /tmp/game.js
