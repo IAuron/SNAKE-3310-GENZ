@@ -51,12 +51,24 @@ jobs:
           s = s.replace(old_start, new_start, 1)
 
           old_step = " G.dir=G.next;let h={x:G.snake[0].x+G.dir.x,y:G.snake[0].y+G.dir.y},n=G.grid;\n if(h.x<0||h.y<0||h.x>=n||h.y>=n||G.snake.some(s=>s.x==h.x&&s.y==h.y)){return endGame()}"
-          new_step = " G.dir=G.next;let h={x:G.snake[0].x+G.dir.x,y:G.snake[0].y+G.dir.y},n=G.grid;\n h.x=(h.x+n)%n;h.y=(h.y+n)%n;\n if(G.snake.some(s=>s.x==h.x&&s.y==h.y)){return endGame()}"
+          new_step = " G.dir=G.next;let h={x:G.snake[0].x+G.dir.x,y:G.snake[0].y+G.dir.y},n=G.grid;\n h.x=(h.x+n)%n;h.y=(h.y+n)%n;\n let ateNow=h.x==G.food.x&&h.y==G.food.y;let bodyToCheck=ateNow?G.snake:G.snake.slice(0,-1);\n if(bodyToCheck.some(s=>s.x==h.x&&s.y==h.y)){return endGame('Tu as touché ton corps 🐍')}"
           if old_step not in s:
               raise SystemExit("Expected step collision block not found")
           s = s.replace(old_step, new_step, 1)
           s = s.replace("let interval=Math.max(48,115-data.up.speed*7-(G.boost?28:0));",
                         "let interval=Math.max(70,155-data.up.speed*7-(G.boost?28:0));", 1)
+
+          s = s.replace("function endGame(){G.running=false;try{PlayablesAdapter.score()}catch(e){};document.getElementById('finalScore').textContent=G.score;document.getElementById('finalInfo').textContent=\`${currentForm().name} · ${G.foodCount} fruits · combo max ${Math.floor(data.stats.maxCombo)} · +${G.foodCount*3} coins environ\`;document.getElementById('gameover').classList.add('show');save()}",
+                        "function endGame(reason){G.running=false;try{PlayablesAdapter.score()}catch(e){};document.getElementById('finalScore').textContent=G.score;document.getElementById('finalInfo').textContent=(reason?reason+' · ':'')+\`${currentForm().name} · ${G.foodCount} fruits · combo max ${Math.floor(data.stats.maxCombo)} · +${G.foodCount*3} coins environ\`;document.getElementById('gameover').classList.add('show');save()}", 1)
+
+          s = s.replace("let anim=G.boost?'BOOST':(G.bite?'BITE':(G.tick%70<9?'BLINK':'IDLE'));",
+                        "let animT=performance.now();let anim=G.boost?'BOOST':(G.bite?'BITE':(Math.floor(animT/160)%24===0?'BLINK':'IDLE'));", 1)
+          s = s.replace("Math.sin(G.tick*.22+i*.65)",
+                        "Math.sin(G.tick*.04+i*.65)", 1)
+          s = s.replace("G.tick%70>=4&&G.tick%70<=8",
+                        "Math.floor(animT/160)%24===0", 1)
+          s = s.replace("G.tick%18<9",
+                        "Math.floor(animT/180)%2===0", 1)
 
           p.write_text(s, encoding="utf-8")
 
