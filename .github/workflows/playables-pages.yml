@@ -62,7 +62,7 @@ jobs:
                         "function endGame(reason){G.running=false;try{PlayablesAdapter.score()}catch(e){};document.getElementById('finalScore').textContent=G.score;document.getElementById('finalInfo').textContent=(reason?reason+' · ':'')+\`${currentForm().name} · ${G.foodCount} fruits · combo max ${Math.floor(data.stats.maxCombo)} · +${G.foodCount*3} coins environ\`;document.getElementById('gameover').classList.add('show');save()}", 1)
 
           s = s.replace("let anim=G.boost?'BOOST':(G.bite?'BITE':(G.tick%70<9?'BLINK':'IDLE'));",
-                        "let anim='IDLE';", 1)
+                        "let animT=performance.now();let anim='IDLE';", 1)
 
           # Remove the animation debug badge from the final UI.
           s = s.replace(/<div[^>]*id=["']animBadge["'][^>]*>.*?<\\/div>/s, "");
